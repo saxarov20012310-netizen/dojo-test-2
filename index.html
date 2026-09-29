@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Услуги стоматологии — запись на консультацию</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="js/consult-shape.js" defer></script>
+  <script src="js/slider.js" defer></script>
+  <script src="js/specialist.js" defer></script>
+  <script src="js/form.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <section class="services" aria-labelledby="services-title">
+      <div class="container">
+        <h2 class="section-title" id="services-title">Услуги</h2>
+      </div>
+
+      <ul class="services__list" data-slider>
+        <li class="services__item">
+          <article class="service-card service-card--cool">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/aligners.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/aligners.jpg" width="768" height="768" alt="" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Элайнеры</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Элайнеры">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Элайнеры"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/implants.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/implants.jpg" width="768" height="768" alt="" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Имплантация</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Имплантация">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Имплантация"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/braces.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/braces.jpg" width="768" height="768" alt="" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Брекеты</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Брекеты">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Брекеты"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/therapy.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/therapy.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Терапия</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Терапия">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Терапия"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/hygiene.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/hygiene.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Гигиена<br> полости рта</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Гигиена полости рта">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Гигиена полости рта"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/surgery.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/surgery.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Хирургия</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Хирургия">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Хирургия"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/gnathology.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/gnathology.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Гнатология</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Гнатология">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Гнатология"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/prosthetics.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/prosthetics.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Протезирование</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Протезирование">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Протезирование"></a>
+            </div>
+          </article>
+        </li>
+        <li class="services__item">
+          <article class="service-card">
+            <div class="service-card__media">
+              <picture>
+                <source srcset="img/services/aesthetic.webp" type="image/webp">
+                <img class="service-card__img" src="img/services/aesthetic.jpg" width="768" height="768" alt="" loading="lazy" draggable="false">
+              </picture>
+              <h3 class="service-card__title">Эстетическая<br> стоматология</h3>
+            </div>
+            <div class="service-card__actions">
+              <a class="service-card__consult" href="#consult" data-service="Эстетическая стоматология">Консультация</a>
+              <a class="service-card__more" href="#" aria-label="Подробнее: Эстетическая стоматология"></a>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </section>
+
+    <section class="consult container" id="consult" aria-labelledby="consult-title">
+      <div class="consult__shape" aria-hidden="true">
+        <span class="consult__glow"></span>
+      </div>
+
+      <div class="consult__photo">
+        <!-- Фото специалиста приходит из админки (js/specialist.js), здесь — значение по умолчанию -->
+        <img class="consult__photo-img" src="img/specialist.webp" width="855" height="725" alt="Специалист клиники держит кейс для элайнеров" data-specialist-photo>
+      </div>
+
+      <div class="consult__body">
+        <h2 class="consult__title" id="consult-title">
+          <span class="consult__title-lead">Запишитесь</span> на бесплатную консультацию прямо сейчас!
+        </h2>
+        <p class="consult__text">Хотите узнать подробнее? Наши специалисты ответят на все ваши вопросы и помогут выбрать оптимальный путь к здоровой и красивой улыбке.</p>
+
+        <form class="consult__form" action="#" method="post" novalidate data-consult-form>
+          <input type="hidden" name="service" value="">
+
+          <div class="consult__fields">
+            <label class="field">
+              <span class="field__label">Введите ФИО</span>
+              <input class="field__input" type="text" name="name" placeholder="ФИО" autocomplete="name" required>
+            </label>
+            <label class="field">
+              <span class="field__label">Введите номер телефона</span>
+              <input class="field__input" type="tel" name="phone" placeholder="+7..." autocomplete="tel" inputmode="tel" required>
+            </label>
+          </div>
+
+          <button class="button consult__submit" type="submit">Записаться на прием</button>
+
+          <label class="consent">
+            <input class="consent__input" type="checkbox" name="consent" checked required>
+            <span class="consent__box" aria-hidden="true"></span>
+            <span class="consent__text">я даю свое согласие на <a class="consent__link" href="#">обработку персональных данных</a></span>
+          </label>
+
+          <p class="consult__status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

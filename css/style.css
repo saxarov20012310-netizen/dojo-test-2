@@ -1,0 +1,565 @@
+:root {
+  --page-bg: #f3f6ff;
+  --ink: #233a5a;
+  --white: #fff;
+  --mint: #38bfc4;
+  --mint-light: #55d6da;
+  --muted-blue: #b4d1ff;
+  --field-bg: #f4f7fc;
+  --placeholder: #92a1bc;
+  --pill-from: #3d4553;
+  --pill-to: #26283a;
+
+  --container: 1200px;
+  --gutter: 20px;
+
+  --font: "Montserrat", Arial, sans-serif;
+  /* «Auto» из Figma для Montserrat; браузерный normal округляет строки вверх */
+  --lh-normal: 1.22;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+}
+
+.page {
+  overflow-x: clip;
+  padding: 50px 0;
+}
+
+.container {
+  width: min(100% - var(--gutter) * 2, var(--container));
+  margin-inline: auto;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 39px;
+}
+
+/* Services slider */
+
+.services__list {
+  --inset: max(var(--gutter), (100% - var(--container)) / 2);
+
+  display: flex;
+  gap: 24px;
+  margin-top: 40px;
+  padding-inline: var(--inset);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--inset);
+  scrollbar-width: none;
+}
+
+.services__list::-webkit-scrollbar {
+  display: none;
+}
+
+.services__list.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+
+.services__item {
+  flex: none;
+  scroll-snap-align: start;
+}
+
+.service-card {
+  position: relative;
+  width: 384px;
+  height: 384px;
+}
+
+.service-card__media {
+  --shade: #171717;
+  --shade-start: 42.5%;
+
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  /* вырез под кнопки — контур из макета */
+  clip-path: path("M364 0C375.046 0 384 8.9543 384 20V292C384 310.856 384 320.284 378.142 326.142C372.284 332 362.856 332 344 332H158C146.954 332 138 340.954 138 352C138 363.201 138 368.802 135.82 373.08C133.903 376.843 130.843 379.903 127.08 381.82C122.802 384 117.201 384 106 384H30C13.4315 384 0 370.569 0 354V30C0 13.4315 13.4315 0 30 0H364Z");
+}
+
+.service-card--cool .service-card__media {
+  --shade: #1b2338;
+  --shade-start: 48.5%;
+}
+
+.service-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  aspect-ratio: 1;
+  background: linear-gradient(to bottom, transparent var(--shade-start), var(--shade));
+}
+
+.service-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.service-card__title {
+  position: absolute;
+  left: 32px;
+  bottom: 80px;
+  z-index: 1;
+  color: var(--white);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 39px;
+}
+
+/* у первой карточки в макете заголовок стоит чуть иначе */
+@media (min-width: 768px) {
+  .service-card--cool .service-card__title {
+    left: 37px;
+    bottom: 82px;
+  }
+}
+
+.service-card__actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.service-card__consult {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 32px;
+  border-radius: 20px;
+  background: radial-gradient(closest-side, var(--pill-from), var(--pill-to));
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: filter 0.2s;
+}
+
+.service-card__more {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: url("../img/icons/arrow-circle.svg") center / 100% no-repeat;
+  transition: filter 0.2s;
+}
+
+.service-card__consult:hover,
+.service-card__more:hover {
+  filter: brightness(1.25);
+}
+
+/* Consultation form */
+
+.consult {
+  position: relative;
+  margin-top: 50px;
+}
+
+.consult__shape {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: url("../img/consult-bg.svg") 0 0 / 100% 100% no-repeat;
+  clip-path: var(--consult-shape, inset(0 round 30px));
+}
+
+.consult__glow {
+  position: absolute;
+  top: 152px;
+  left: 81.5px;
+  width: 267px;
+  height: 267px;
+  border-radius: 50%;
+  background-color: var(--white);
+  filter: blur(100px);
+}
+
+.consult__photo {
+  position: absolute;
+  top: -30px;
+  left: 32.5px;
+  width: 357px;
+  height: 353px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.consult__photo-img {
+  position: absolute;
+  top: -9.1px;
+  left: -26.3px;
+  width: 427.5px;
+  max-width: none;
+  height: auto;
+}
+
+.consult__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  min-height: 323px;
+  padding: 61px 40px 38px 416px;
+  color: var(--white);
+}
+
+.consult__title {
+  max-width: 350px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: var(--lh-normal);
+}
+
+.consult__text {
+  max-width: 560px;
+  color: var(--muted-blue);
+  font-size: 12px;
+  line-height: var(--lh-normal);
+}
+
+.consult__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 21px 30px;
+}
+
+.consult__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 240px;
+}
+
+.field__label {
+  font-size: 10px;
+  line-height: var(--lh-normal);
+}
+
+.field__input {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--white);
+  border-radius: 10px;
+  background-color: var(--field-bg);
+  color: var(--ink);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field__input::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
+}
+
+.field__input:focus-visible {
+  border-color: var(--mint);
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: #ff7a7a;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 40px;
+  background-color: var(--mint);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #2fadb2;
+}
+
+.button:focus-visible {
+  outline-color: var(--white);
+}
+
+.consent {
+  position: relative;
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 11px;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.consent__input {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  opacity: 0;
+}
+
+.consent__box {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background-color: rgb(0 0 0 / 20%);
+}
+
+.consent__input:checked + .consent__box {
+  background-image: url("../img/icons/check.svg");
+}
+
+.consent__input:focus-visible + .consent__box {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+/* как в макете: блок текста обрезан по высоте заглавных букв */
+.consent__text {
+  text-box: trim-both cap alphabetic;
+}
+
+.consent__link {
+  color: var(--mint-light);
+  font-weight: 700;
+}
+
+.consult__status {
+  flex-basis: 100%;
+  font-size: 12px;
+}
+
+.consult__status:empty {
+  display: none;
+}
+
+/* Tablet: форма перестраивается в колонку */
+
+@media (max-width: 1023px) {
+  .consult__shape {
+    background-image: url("../img/consult-bg-mobile.svg");
+  }
+
+  .consult__glow {
+    top: auto;
+    bottom: -174px;
+    left: 40px;
+    width: 315px;
+    height: 315px;
+    background-color: #c7dfff;
+  }
+
+  /* фото обрезается тем же контуром, что и фон */
+  .consult__photo {
+    inset: 0;
+    width: auto;
+    height: auto;
+    clip-path: var(--consult-shape, none);
+  }
+
+  .consult__photo-img {
+    top: calc(100% - 254px);
+    left: 0;
+    width: 350px;
+  }
+
+  .consult__body {
+    gap: 16px;
+    min-height: 789px;
+    padding: 80px 40px 236px;
+  }
+
+  .consult__title,
+  .consult__text {
+    max-width: 480px;
+  }
+
+  .consult__title {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .consult__title-lead {
+    display: block;
+  }
+
+  .consult__text {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .consult__form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    max-width: 480px;
+  }
+
+  .consult__fields {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .field {
+    width: 100%;
+  }
+
+  .field__label {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .consent {
+    align-items: flex-start;
+    margin-top: -6px;
+  }
+
+  /* в макете перенос строго после «обработку» */
+  .consent__text {
+    max-width: 225px;
+  }
+
+  .consent__input:checked + .consent__box {
+    background-image: url("../img/icons/check-mint.svg");
+  }
+
+  .consent__box {
+    background-color: rgb(255 255 255 / 10%);
+  }
+
+  .consent__link {
+    color: var(--mint);
+    text-decoration: none;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 767px) {
+  .page {
+    padding: 20px 0;
+  }
+
+  .section-title {
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  .services__list {
+    gap: 9.625px;
+    margin-top: 16px;
+  }
+
+  .service-card {
+    width: 154px;
+    height: auto;
+  }
+
+  .service-card__media {
+    height: 125px;
+    border-radius: 12px 8px 8px;
+    clip-path: none;
+  }
+
+  .service-card__title {
+    left: 13px;
+    bottom: 6px;
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  .service-card__actions {
+    position: static;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .service-card__consult {
+    flex: 1;
+    justify-content: center;
+    height: 25px;
+    padding: 0;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .service-card__more {
+    width: 25px;
+    height: 25px;
+  }
+
+  .consult {
+    margin-top: 24px;
+  }
+}
