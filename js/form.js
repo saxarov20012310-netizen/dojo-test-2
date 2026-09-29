@@ -21,9 +21,42 @@
     });
   });
 
+  // Телефон: поле всегда начинается с +7, остальное форматируется по ходу ввода
+  const PHONE_PREFIX = '+7 ';
+
+  function nationalDigits(value) {
+    let digits = value.replace(/\D/g, '');
+    if (value.startsWith('+7')) digits = digits.slice(1);
+    // вставили номер целиком: 8 999… или 7 999…
+    if (digits.length > 10 && /^[78]/.test(digits)) digits = digits.slice(1);
+    return digits.slice(0, 10);
+  }
+
+  function formatPhone(digits) {
+    // разделитель появляется только со следующей цифрой — иначе Backspace
+    // упирался бы в «) » и не мог его стереть
+    let result = PHONE_PREFIX;
+    if (digits.length > 0) result += '(' + digits.slice(0, 3);
+    if (digits.length > 3) result += ') ' + digits.slice(3, 6);
+    if (digits.length > 6) result += '-' + digits.slice(6, 8);
+    if (digits.length > 8) result += '-' + digits.slice(8, 10);
+    return result;
+  }
+
+  phoneInput.addEventListener('focus', () => {
+    if (!phoneInput.value) phoneInput.value = PHONE_PREFIX;
+  });
+
+  phoneInput.addEventListener('blur', () => {
+    if (nationalDigits(phoneInput.value).length === 0) phoneInput.value = '';
+  });
+
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = formatPhone(nationalDigits(phoneInput.value));
+  });
+
   function isPhoneValid(value) {
-    const digits = value.replace(/\D/g, '');
-    return digits.length === 11 && /^[78]/.test(digits);
+    return nationalDigits(value).length === 10;
   }
 
   function markInvalid(input, invalid) {
