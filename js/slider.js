@@ -1,18 +1,27 @@
-// Слайдер услуг: горизонтальная прокрутка со scroll-snap плюс
-// автопрокрутка — лента медленно и бесконечно едет влево.
-// Автопрокрутка останавливается, пока пользователь смотрит на ленту
-// или листает её сам, и выключена при prefers-reduced-motion.
+// Слайдер услуг — бесконечная лента, которая медленно едет влево.
+//
+// Лента двигается через transform, а не через scrollLeft: прокрутка
+// округляется до целых пикселей и на малой скорости идёт рывками,
+// а transform понимает дробные значения — движение получается плавным.
+//
+// При наведении лента плавно тормозит и так же плавно разгоняется.
+// Её можно тянуть мышью и пальцем (с инерцией) и листать тачпадом.
+// При prefers-reduced-motion автопрокрутка выключена.
 
 (function () {
   const slider = document.querySelector('[data-slider]');
   if (!slider) return;
+  const track = slider.querySelector('.services__list');
 
-  const SPEED = 30;          // px в секунду
-  const RESUME_DELAY = 3000; // пауза после ручной прокрутки, мс
+  const SPEED = 30;           // px/с — скорость автопрокрутки
+  const EASE = 6;             // как быстро лента тормозит и разгоняется
+  const FRICTION = 3;         // затухание инерции после перетаскивания
+  const MAX_FLING = 3000;     // px/с — ограничение скорости броска
+  const RESUME_DELAY = 2500;  // пауза после ручного управления, мс
   const DRAG_THRESHOLD = 5;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const items = Array.from(slider.children);
+  const items = Array.from(track.children);
 
   // Для бесконечной ленты добавляем копию карточек. Копия скрыта
   // от скринридеров и клавиатуры — для них остаётся один набор.
@@ -20,112 +29,105 @@
     const clone = item.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
     clone.querySelectorAll('a').forEach((link) => link.setAttribute('tabindex', '-1'));
-    slider.append(clone);
+    track.append(clone);
   });
 
   let loopWidth = 0;
-  let position = 0;
-  let lastTime = 0;
+  let position = 0;   // насколько лента уехала влево, px
+  let speed = 0;      // текущая скорость автопрокрутки
+  let velocity = 0;   // инерция после броска
+  let resumeAt = 0;
   let isHovered = false;
   let hasFocus = false;
-  let resumeTimer = null;
-  let userActive = false;
 
   function measure() {
-    loopWidth = slider.children[items.length].offsetLeft - items[0].offsetLeft;
+    loopWidth = track.children[items.length].offsetLeft - items[0].offsetLeft;
   }
 
-  function isRunning() {
-    return !reducedMotion.matches && !isHovered && !hasFocus && !userActive;
+  function wrap(value) {
+    return loopWidth > 0 ? ((value % loopWidth) + loopWidth) % loopWidth : value;
   }
 
-  function tick(time) {
-    const dt = Math.min(time - lastTime, 100) / 1000;
-    lastTime = time;
+  function canAutoplay(now) {
+    return !reducedMotion.matches && !isHovered && !hasFocus && !drag.active && now >= resumeAt;
+  }
 
-    if (isRunning() && loopWidth > 0) {
-      position += SPEED * dt;
-      if (position >= loopWidth) position -= loopWidth;
-      slider.scrollLeft = position;
+  let lastTime = performance.now();
+
+  function tick(now) {
+    const dt = Math.min(now - lastTime, 100) / 1000;
+    lastTime = now;
+
+    if (!drag.active) {
+      if (velocity !== 0) {
+        position += velocity * dt;
+        velocity *= Math.exp(-FRICTION * dt);
+        if (Math.abs(velocity) < 5) velocity = 0;
+      }
+
+      const target = canAutoplay(now) ? SPEED : 0;
+      speed += (target - speed) * Math.min(1, EASE * dt);
+      position += speed * dt;
     }
+
+    position = wrap(position);
+    track.style.transform = `translate3d(${-position}px, 0, 0)`;
     requestAnimationFrame(tick);
   }
 
-  // Пользователь листает сам: включаем snap и ждём, пока он закончит
-  function pauseForUser() {
-    userActive = true;
-    slider.classList.remove('is-autoplay');
-    clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => {
-      userActive = false;
-      position = slider.scrollLeft;
-      slider.classList.add('is-autoplay');
-    }, RESUME_DELAY);
+  function holdAutoplay() {
+    resumeAt = performance.now() + RESUME_DELAY;
   }
 
-  // Ручная прокрутка дошла до копии — незаметно перескакиваем на оригинал
-  slider.addEventListener('scroll', () => {
-    if (isRunning()) return;
-    if (loopWidth > 0 && slider.scrollLeft >= loopWidth) {
-      slider.scrollLeft -= loopWidth;
-    }
-    position = slider.scrollLeft;
-  }, { passive: true });
-
-  slider.addEventListener('wheel', pauseForUser, { passive: true });
-  slider.addEventListener('touchstart', pauseForUser, { passive: true });
-  slider.addEventListener('pointerenter', (event) => {
-    if (event.pointerType === 'mouse') isHovered = true;
-  });
-  slider.addEventListener('pointerleave', () => {
-    isHovered = false;
-    position = slider.scrollLeft;
-  });
-  slider.addEventListener('focusin', () => {
-    hasFocus = true;
-    slider.classList.remove('is-autoplay');
-  });
-  slider.addEventListener('focusout', () => {
-    hasFocus = false;
-    position = slider.scrollLeft;
-    slider.classList.add('is-autoplay');
-  });
-
-  // Перетаскивание мышью
-  let startX = 0;
-  let startScroll = 0;
-  let isPointerDown = false;
-  let moved = false;
+  // Перетаскивание мышью и пальцем
+  const drag = { pending: false, active: false, startX: 0, startPosition: 0, lastX: 0, lastTime: 0 };
+  let suppressClick = false;
 
   slider.addEventListener('pointerdown', (event) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0) return;
-    isPointerDown = true;
-    moved = false;
-    startX = event.clientX;
-    startScroll = slider.scrollLeft;
-    pauseForUser();
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    drag.pending = true;
+    drag.startX = drag.lastX = event.clientX;
+    drag.startPosition = position;
+    drag.lastTime = event.timeStamp;
+    suppressClick = false;
   });
 
   slider.addEventListener('pointermove', (event) => {
-    if (!isPointerDown) return;
-    const delta = event.clientX - startX;
+    if (!drag.pending) return;
+    const delta = event.clientX - drag.startX;
 
-    if (!moved && Math.abs(delta) > DRAG_THRESHOLD) {
-      moved = true;
+    if (!drag.active && Math.abs(delta) > DRAG_THRESHOLD) {
+      drag.active = true;
+      suppressClick = true;
+      speed = 0;
+      velocity = 0;
       slider.classList.add('is-dragging');
       slider.setPointerCapture(event.pointerId);
     }
-    if (moved) {
-      slider.scrollLeft = startScroll - delta;
+    if (!drag.active) return;
+
+    position = drag.startPosition - delta;
+
+    const dt = (event.timeStamp - drag.lastTime) / 1000;
+    if (dt > 0) {
+      const instant = -(event.clientX - drag.lastX) / dt;
+      velocity = velocity * 0.2 + instant * 0.8;
     }
+    drag.lastX = event.clientX;
+    drag.lastTime = event.timeStamp;
   });
 
-  function endDrag() {
-    if (!isPointerDown) return;
-    isPointerDown = false;
-    // при возврате scroll-snap браузер сам доведёт до ближайшей карточки
+  function endDrag(event) {
+    if (!drag.pending) return;
+    drag.pending = false;
+    if (!drag.active) return;
+
+    drag.active = false;
     slider.classList.remove('is-dragging');
-    pauseForUser();
+    // если палец остановился перед отпусканием — без броска
+    const idle = event.timeStamp - drag.lastTime > 80;
+    velocity = idle ? 0 : Math.max(-MAX_FLING, Math.min(MAX_FLING, velocity));
+    holdAutoplay();
   }
 
   slider.addEventListener('pointerup', endDrag);
@@ -133,17 +135,53 @@
 
   // после перетаскивания клик по ссылке внутри карточки не должен срабатывать
   slider.addEventListener('click', (event) => {
-    if (moved) {
+    if (suppressClick) {
       event.preventDefault();
-      moved = false;
+      suppressClick = false;
     }
   }, true);
 
-  measure();
-  new ResizeObserver(measure).observe(slider);
-  slider.classList.add('is-autoplay');
-  requestAnimationFrame((time) => {
-    lastTime = time;
-    requestAnimationFrame(tick);
+  // ссылки и картинки не должны «перетаскиваться» браузером
+  slider.addEventListener('dragstart', (event) => event.preventDefault());
+
+  // Горизонтальная прокрутка тачпадом или колесом с Shift
+  slider.addEventListener('wheel', (event) => {
+    const horizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+    if (!horizontal && !event.shiftKey) return;
+    event.preventDefault();
+
+    const delta = horizontal ? event.deltaX : event.deltaY;
+    position += event.deltaMode === 1 ? delta * 16 : delta;
+    speed = 0;
+    velocity = 0;
+    holdAutoplay();
+  }, { passive: false });
+
+  // Наведение мышью — плавная остановка
+  slider.addEventListener('pointerenter', (event) => {
+    if (event.pointerType === 'mouse') isHovered = true;
   });
+  slider.addEventListener('pointerleave', (event) => {
+    if (event.pointerType === 'mouse') isHovered = false;
+  });
+
+  // Клавиатура: карточка с фокусом выезжает в начало ленты
+  slider.addEventListener('focusin', (event) => {
+    hasFocus = true;
+    const item = event.target.closest('.services__item');
+    if (!item) return;
+    position = item.offsetLeft - items[0].offsetLeft;
+    speed = 0;
+    velocity = 0;
+  });
+  slider.addEventListener('focusout', (event) => {
+    hasFocus = slider.contains(event.relatedTarget);
+  });
+
+  measure();
+  new ResizeObserver(() => {
+    measure();
+    position = wrap(position);
+  }).observe(track);
+  requestAnimationFrame(tick);
 })();

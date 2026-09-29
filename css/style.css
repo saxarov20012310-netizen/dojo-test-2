@@ -82,38 +82,32 @@ input {
 
 /* Services slider */
 
-.services__list {
+/* лента двигается через transform (js/slider.js): так движение плавное,
+   без округления прокрутки до целых пикселей */
+.services__slider {
   --inset: max(var(--gutter), (100% - var(--container)) / 2);
 
-  display: flex;
-  gap: 24px;
   margin-top: 40px;
-  padding-inline: var(--inset);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--inset);
-  scrollbar-width: none;
+  overflow-x: clip;
+  cursor: grab;
+  touch-action: pan-y;
 }
 
-.services__list::-webkit-scrollbar {
-  display: none;
-}
-
-/* пока лента едет сама, snap не должен её останавливать */
-.services__list.is-autoplay {
-  scroll-snap-type: none;
-}
-
-.services__list.is-dragging {
-  scroll-snap-type: none;
+.services__slider.is-dragging {
   cursor: grabbing;
   user-select: none;
 }
 
+.services__list {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  padding-left: var(--inset);
+  will-change: transform;
+}
+
 .services__item {
   flex: none;
-  scroll-snap-align: start;
 }
 
 .service-card {
@@ -520,9 +514,12 @@ input {
     line-height: 34px;
   }
 
+  .services__slider {
+    margin-top: 16px;
+  }
+
   .services__list {
     gap: 9.625px;
-    margin-top: 16px;
   }
 
   .service-card {
