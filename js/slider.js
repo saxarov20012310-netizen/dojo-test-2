@@ -33,6 +33,7 @@
   });
 
   let loopWidth = 0;
+  let inset = 0;      // отступ ленты слева — до края контента
   let position = 0;   // насколько лента уехала влево, px
   let speed = 0;      // текущая скорость автопрокрутки
   let velocity = 0;   // инерция после броска
@@ -41,11 +42,20 @@
   let hasFocus = false;
 
   function measure() {
-    loopWidth = track.children[items.length].offsetLeft - items[0].offsetLeft;
+    // getBoundingClientRect, а не offsetLeft: на мобильном ширина круга
+    // дробная (1472.6 px), и округление давало микрорывок на стыке
+    loopWidth = track.children[items.length].getBoundingClientRect().left - items[0].getBoundingClientRect().left;
+    inset = parseFloat(getComputedStyle(track).paddingLeft) || 0;
   }
 
+  // Перескок на круг назад делаем, только когда лента уехала дальше
+  // левого отступа: иначе слева от первой карточки на мгновение
+  // оказывается пустое поле и уезжающая карточка «пропадает».
   function wrap(value) {
-    return loopWidth > 0 ? ((value % loopWidth) + loopWidth) % loopWidth : value;
+    if (loopWidth <= 0) return value;
+    while (value >= loopWidth + inset) value -= loopWidth;
+    while (value < 0) value += loopWidth;
+    return value;
   }
 
   function canAutoplay(now) {
