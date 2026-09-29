@@ -77,13 +77,33 @@
     return Math.round(value * 100) / 100;
   }
 
-  function update() {
-    const { width, height } = consult.getBoundingClientRect();
-    const path = columnLayout.matches
-      ? toPath(columnPoints(width, height), (x, y) => [y, x])
-      : toPath(desktopPoints(width, height), (x, y) => [width - x, y]);
+  // На десктопе фото обрезано той же фигурой, только поднятой на 31 px
+  // (голова выходит за верх формы). Путь строится в координатах блока фото.
+  const PHOTO_RISE = 31;
+  const photo = consult.querySelector('.consult__photo');
 
-    consult.style.setProperty('--consult-shape', `path("${path}")`);
+  function update() {
+    const box = consult.getBoundingClientRect();
+    const { width, height } = box;
+
+    if (columnLayout.matches) {
+      const path = toPath(columnPoints(width, height), (x, y) => [y, x]);
+      consult.style.setProperty('--consult-shape', `path("${path}")`);
+      consult.style.removeProperty('--consult-photo-shape');
+      return;
+    }
+
+    const photoBox = photo.getBoundingClientRect();
+    const dx = photoBox.left - box.left;
+    const dy = photoBox.top - box.top;
+
+    const shape = toPath(desktopPoints(width, height), (x, y) => [width - x, y]);
+    const photoShape = toPath(
+      desktopPoints(width, height + PHOTO_RISE),
+      (x, y) => [width - x - dx, y - PHOTO_RISE - dy],
+    );
+    consult.style.setProperty('--consult-shape', `path("${shape}")`);
+    consult.style.setProperty('--consult-photo-shape', `path("${photoShape}")`);
   }
 
   new ResizeObserver(update).observe(consult);

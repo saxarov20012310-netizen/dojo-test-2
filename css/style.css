@@ -229,13 +229,19 @@ input {
   filter: blur(100px);
 }
 
+/* Фото стоит на нижнем краю формы: если текст справа переносится и форма
+   становится выше макета, фото не обрывается посередине */
 .consult__photo {
   position: absolute;
-  top: -30px;
+  bottom: 0;
+  /* то же, но с округлением до целого пикселя, чтобы фото не размывалось */
+  top: round(down, 100% - 353px, 1px);
   left: 32.5px;
   width: 357px;
   height: 353px;
   overflow: hidden;
+  /* внизу слева фото обрезается по скруглению формы, как в макете */
+  clip-path: var(--consult-photo-shape, none);
   pointer-events: none;
 }
 
