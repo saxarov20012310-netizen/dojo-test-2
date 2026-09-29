@@ -100,6 +100,11 @@ input {
   display: none;
 }
 
+/* пока лента едет сама, snap не должен её останавливать */
+.services__list.is-autoplay {
+  scroll-snap-type: none;
+}
+
 .services__list.is-dragging {
   scroll-snap-type: none;
   cursor: grabbing;
