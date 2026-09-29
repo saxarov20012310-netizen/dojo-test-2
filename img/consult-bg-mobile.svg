@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="350" height="789" viewBox="0 0 350 789" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(278.05 278.834 -551.64 253.613 384.167 44.1661)">
+      <stop stop-color="#233A5A"/>
+      <stop offset="1" stop-color="#3C6AB9"/>
+    </radialGradient>
+  </defs>
+  <!-- мобильная фигура — та же, повёрнутая на 90° с отражением (x и y меняются местами) -->
+  <rect width="789" height="350" fill="url(#bg)" transform="matrix(0 1 1 0 0 0)"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1199" height="323" viewBox="0 0 1199 323" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(278.05 278.834 -551.64 253.613 384.167 44.1661)">
+      <stop stop-color="#233A5A"/>
+      <stop offset="1" stop-color="#3C6AB9"/>
+    </radialGradient>
+  </defs>
+  <!-- в макете фигура отражена по горизонтали вместе с градиентом -->
+  <rect width="1199" height="323" fill="url(#bg)" transform="translate(1199 0) scale(-1 1)"/>
+</svg>
